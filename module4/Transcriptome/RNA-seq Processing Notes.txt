@@ -1,0 +1,49 @@
+4/23/26
+
+Transcriptome 
+
+Bacteria that can degrade bioplastics
+
+RNA
+
+samples.csv is our metadata (should download)
+Promicromonospora.gff 
+Promicromonospora.fasta
+Transcriptome 
+
+1) Use tool: Falco under fastqc (should give the option for falco)
+Version: 0.74+galaxy1
+Parameters: Input the Transcriptome; default setting 
+
+2) Choose one pair of reads from the web page set, download the forward and reverse, then visualize it to talk about it.
+
+3) Use tool: Fastp (gets rid of anything that doesn't mean the quality)
+version: 1.3.1+galaxy0
+Parameters: Paired collection, Input the transcriptome ; default settings
+
+4) Choose one of the reports from HTML and talk about the total reads before and after filtration 
+- Download the report
+
+5) use tool: HISAT2 (aligns to the genome)
+Version: 2.2.2+galaxy0
+Parameters: use a genome from history, inputting the fasta provided, paired and dataset collection inputting the fastp results; default settings
+
+6) Use tool: StringTie (assembles a Transcription)
+Version: 2.2.3+galaxy0
+Parameters: short reads and input the HISat2 collection; default settings
+
+7) Use tool: StringTie merge
+Version: 2.2.3+galaxy0
+Parameters: Under Transcripts, manually select the stringtie collect from dataset collection ; Default setting.
+
+8) Use tool Gffcompare
+Version: 0.12.10+galaxy0
+Parameters: Input the stringTie merge and gff file under the same GTF input for comparsion.
+
+9) Use tool: Featurecounts
+Version:2.1.1+galaxy0
+Parameters: Input the alignment file of HISat2, switch the gene annotation file to a gff/gft file in our history, and yes, paired-end and count them as 1 single fragment under the does the input have read pairs; default settings
+
+9) Use tool: feature counts
+Version: 2.1.1+galaxy0
+Parameters:
