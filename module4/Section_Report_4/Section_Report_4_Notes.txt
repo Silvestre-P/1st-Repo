@@ -1,0 +1,106 @@
+Section Report 4 Notes
+5/12/26
+
+From our assigned Transcriptome data set downloading: samplesegtB.csv, burkholderia.gff, transcripts, and burkholderia.fasta 
+
+1) Use tool: Falco under fastqc (should give the option for falco)
+Version: 0.74+galaxy1
+Parameters: Input the Transcripts; default setting 
+
+2) Choose one pair of reads from the web page set, download the forward and reverse, then visualize it to talk about it.
+
+3) Use tool: Fastp (gets rid of anything that doesn't mean the quality)
+version: 1.3.1+galaxy0
+Parameters: Switch to Paired collection, Input the transcriptome/transcripts ; default settings
+
+4) Choose one of the reports from HTML and talk about the total reads before and after filtration 
+- Download the report
+
+5) use tool: HISAT2 (aligns to the genome)
+Version: 2.2.2+galaxy0
+Parameters: use a genome from history, inputting the fasta provided, switching to "paired and dataset collection" inputting the fastp results; default settings
+
+6) Use tool: StringTie (assembles a Transcription)
+Version: 2.2.3+galaxy0
+Parameters: short reads option and input the HISat2 collection; * Modified to Use reference genome file for assembly and from history, then input the gff 
+
+7) Use tool: StringTie merge
+Version: 2.2.3+galaxy0
+Parameters: Under Transcripts, manually select the stringtie collect from dataset collection and use reference gff file; Default setting.
+
+8) Use tool: Featurecounts
+Version:2.1.1+galaxy0
+Parameters: Input the alignment file of HISat2, switch the gene annotation file to a gff/gft file in our history, and yes, paired-end and count them as 1 single fragment under the does the input have read pairs; For GFF gene identifier: input transcript_id
+	- After the file is completed, include hidden and under 6 separate featurecounts not the summary change the name to either like wildtype or egtBmutant based on the data and samples.csv
+
+9) Use tool: DEseq2
+Version: 2.11.40.8+galaxy
+Parameters: Factor 1: under specify factor name change to Growth_Media then to factor level 1 change to wildtype. For Factor 2 change to egtBmutant, under advanced options use beta priors and under output options also select output normalized counts. Under wildtype factor level, upload datasets by the 3 dots and there should be 3 wildtype counts. Do the same but for the egtBmutant with also 3 datasets.
+-Download plots
+
+10) Use tool: Filter (data on any column.....)
+Version: 1.1.1
+Parameters: Input DEseq2 data and change following condition to c7<0.05 .
+-Do this again but with the filter dataset changing the following condition: abs(c3)>1 .
+
+11) Create a header/fetch data by uploading
+ GeneID	Base mean	log2(FC)	StdErr	Wald-Stats	P-value	P-adj	
+  (the spaces is from 1 Tab key) under upload and making the type tabular.
+
+12) Use tool: Concatenate multiple datasets or collections
+Version:1.0.0
+Parameters: Input the Header in the concatenate and insert another dataset inputting the recent filter.
+ -Rename to Differential Gene Expression on of Broth and Plate
+ -Download
+
+13) Use tool: Volcano Plot
+Version: 4.0.2+galaxy0
+Parameters: Input Differential file; Make sure to add the correct column number to each assigned column in the table with default settings
+ - Analysis: dots in right are more regulated, having lower p-values when placed higher.
+ - Download
+
+14) Using excel open, select every numberical value and custom sort by column Log2(FC) with the order smallest to largest. Then select and highlight the first 10 rows and the last 10 rows, these rows we will keep and use. Everything else in the middle we delete and save file as csv. Then upload the file to galaxy and rename to top10upanddown.csv.
+
+15) Use tool: Join two datasets (side by side.....)
+Version: 2.1.3
+Parameters: *Since the top10upanddown file is csv, convert to tabular by editing ar
+Join: Topupanddown file using column 1 and with the normalized counts and also column 1. Also keep the header lines.
+
+16) Use tool: Cut
+Version: 1.0.2
+Parameters: cut columns: c8-c14 from the join 2 datasets. Default settings
+
+17) Use tool: Heatmap2
+Version: 3.3.0+galaxy0
+Parameters: Input the cut data changing the data transformation to Log2(value+1) and name of the colormap PiYG
+ -The green represents higher expression and pink is lower.
+ -Download
+
+18) Use tool: Filter (data on any column using simple expressions)
+Version: 1.1.1
+Parameters: Input the gff and changing the condition to " c3=='CDS' " , column may change depending on CDS.
+
+19) Use tool: Cut 
+Version: 1.0.2
+Parameters: Input the filter dataset and cut column: c9 for the attributes; default settings
+
+20) Use tool: Convert (delimiters to TAB)
+Version: 1.0.1
+Parameters: Convert all to Semicolons in the new cut file.
+-Analysis: We look at column 2 of gene name
+
+21) Use tool: Replace Text (in a specific column)
+Version: 9.5+galaxy
+Parameters: Input Convert file and replace column 2 for the gene name and under find pattern:   " Parent= " . 
+- We are looking at products 
+
+22) Use tool: Cut
+Version: 1.0.2
+Parameters: Input the replace file and cut: c2,c12 .
+ -We wanted the gene name and products
+
+23) Use tool: Join two Datasets
+Version: 2.1.3
+Parameters: join the new cut file and the topupanddown file both in column 1, while also keeping the header lines.
+ - Keeping in the features that are common and annotated.
+ - Download
